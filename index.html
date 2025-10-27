@@ -1,114 +1,164 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>حاسبة المعدل</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GPA Calculator</title>
   <style>
     body {
-      font-family: "Tajawal", sans-serif;
-      background: #f2f4f8;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #121212;
+      color: #f0f0f0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 0;
       padding: 20px;
-      text-align: center;
-      direction: rtl;
     }
+
     h1 {
-      color: #2b5;
+      color: #00ff88;
+      font-size: 2em;
+      text-align: center;
       margin-bottom: 20px;
     }
-    .subject {
-      background: white;
-      border-radius: 15px;
-      padding: 15px;
-      margin-bottom: 15px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-    input {
-      width: 70px;
-      padding: 5px;
-      margin: 5px;
-      text-align: center;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-    }
-    button {
-      background: #2b5;
-      color: white;
-      border: none;
-      padding: 10px 15px;
+
+    .course {
+      background-color: #1e1e1e;
+      border: 1px solid #333;
       border-radius: 10px;
-      font-size: 16px;
+      padding: 15px;
+      margin-bottom: 10px;
+      width: 90%;
+      max-width: 500px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    input {
+      background-color: #2c2c2c;
+      border: 1px solid #555;
+      border-radius: 6px;
+      color: #fff;
+      padding: 5px 8px;
+      width: 100px;
+    }
+
+    button {
+      background-color: #00ff88;
+      color: #000;
+      border: none;
+      border-radius: 6px;
+      padding: 8px 12px;
       cursor: pointer;
-      margin-top: 10px;
-    }
-    button:hover {
-      background: #249;
-    }
-    #result {
-      font-size: 20px;
-      margin-top: 20px;
-      color: #333;
       font-weight: bold;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background-color: #00cc6a;
+    }
+
+    #add-course {
+      margin: 20px 0;
+    }
+
+    #result {
+      font-size: 1.3em;
+      color: #00ff88;
+      margin-top: 15px;
+    }
+
+    .delete-btn {
+      background-color: #ff3b3b;
+      color: #fff;
+      padding: 6px 10px;
+    }
+
+    .delete-btn:hover {
+      background-color: #d62d2d;
+    }
+
+    @media (max-width: 600px) {
+      input {
+        width: 80px;
+      }
     }
   </style>
 </head>
 <body>
-  <h1>📘 حاسبة المعدل</h1>
-  <div id="subjects"></div>
-  <button onclick="addSubject()">➕ إضافة مادة</button><br>
-  <button onclick="calculate()">🔢 احسب المعدل</button>
+  <h1>تحيا ولاد ميمون</h1>
+
+  <div id="courses"></div>
+
+  <button id="add-course">➕ Add Course</button>
+  <button id="calculate">🧮 Calculate GPA</button>
+
   <div id="result"></div>
 
   <script>
-    function addSubject() {
-      const container = document.getElementById('subjects');
-      const div = document.createElement('div');
-      div.className = 'subject';
+    const coursesDiv = document.getElementById("courses");
+    const addBtn = document.getElementById("add-course");
+    const calcBtn = document.getElementById("calculate");
+    const resultDiv = document.getElementById("result");
+
+    function createCourse() {
+      const div = document.createElement("div");
+      div.className = "course";
       div.innerHTML = `
-        <label>TD:</label><input type="number" step="0.01" class="td">
-        <label>%TD:</label><input type="number" step="0.01" class="ptd" placeholder="مثلاً 0.4 أو 40">
-        <label>Exam:</label><input type="number" step="0.01" class="exam">
-        <label>%Exam:</label><input type="number" step="0.01" class="pexam" placeholder="مثلاً 0.6 أو 60">
-        <label>معامل:</label><input type="number" step="0.01" class="coeff" value="1">
+        <input type="number" placeholder="TD point" step="0.01">
+        <input type="number" placeholder="TD %" value="0" step="1">
+        <input type="number" placeholder="Exam point" step="0.01">
+        <input type="number" placeholder="Exam %" value="0" step="1">
+        <input type="number" placeholder="Coef" step="0.01">
+        <button class="delete-btn">🗑️</button>
       `;
-      container.appendChild(div);
+
+      div.querySelector(".delete-btn").onclick = () => div.remove();
+      coursesDiv.appendChild(div);
     }
 
-    function calculate() {
-      const subjects = document.getElementsByClassName('subject');
+    addBtn.onclick = createCourse;
+
+    calcBtn.onclick = () => {
+      const courses = document.querySelectorAll(".course");
       let totalWeighted = 0;
-      let totalCoeff = 0;
+      let totalCoef = 0;
 
-      for (let s of subjects) {
-        let td = parseFloat(s.querySelector('.td').value) || 0;
-        let ptd = parseFloat(s.querySelector('.ptd').value) || 0;
-        let exam = parseFloat(s.querySelector('.exam').value) || 0;
-        let pexam = parseFloat(s.querySelector('.pexam').value) || 0;
-        let coeff = parseFloat(s.querySelector('.coeff').value) || 1;
+      courses.forEach(course => {
+        const tdPoint = parseFloat(course.children[0].value) || 0;
+        const tdPerc = parseFloat(course.children[1].value) / 100 || 0;
+        const examPoint = parseFloat(course.children[2].value) || 0;
+        const examPerc = parseFloat(course.children[3].value) / 100 || 0;
+        const coef = parseFloat(course.children[4].value) || 0;
 
-        // تحويل النسبة المئوية إلى رقم عشري إن كانت أكبر من 1
-        if (ptd > 1) ptd = ptd / 100;
-        if (pexam > 1) pexam = pexam / 100;
+        let subjectResult = 0;
 
-        // القاعدة الخاصة: إذا لم يُدخل أحد الجزأين ونسبة الآخر = 1، يُحسب وحده
-        let mark = 0;
-        if (exam === 0 && (ptd === 1 || ptd === 100)) {
-          mark = td;
-        } else if (td === 0 && (pexam === 1 || pexam === 100)) {
-          mark = exam;
+        if (examPoint === 0 && tdPoint > 0 && (tdPerc === 1 || tdPerc === 100)) {
+          subjectResult = tdPoint * coef;
+        } else if (tdPoint === 0 && examPoint > 0 && (examPerc === 1 || examPerc === 100)) {
+          subjectResult = examPoint * coef;
         } else {
-          mark = (td * ptd) + (exam * pexam);
+          subjectResult = ((tdPoint * tdPerc) + (examPoint * examPerc)) * coef;
         }
 
-        totalWeighted += mark * coeff;
-        totalCoeff += coeff;
+        totalWeighted += subjectResult;
+        totalCoef += coef;
+      });
+
+      if (totalCoef > 0) {
+        const gpa = (totalWeighted / totalCoef).toFixed(2);
+        resultDiv.innerHTML = `🎯 Your GPA is: <strong>${gpa}</strong>`;
+      } else {
+        resultDiv.innerHTML = "⚠️ Please enter valid data.";
       }
+    };
 
-      let avg = totalWeighted / totalCoeff;
-      if (isNaN(avg)) avg = 0;
-
-      document.getElementById('result').innerText = `المعدل العام: ${avg.toFixed(2)}`;
-    }
+    // Start with one course by default
+    createCourse();
   </script>
 </body>
 </html>
