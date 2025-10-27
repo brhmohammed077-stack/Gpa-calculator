@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>حاسبة المعدل</title>
+  <style>
+    body {
+      font-family: "Tajawal", sans-serif;
+      background: #f2f4f8;
+      padding: 20px;
+      text-align: center;
+      direction: rtl;
+    }
+    h1 {
+      color: #2b5;
+      margin-bottom: 20px;
+    }
+    .subject {
+      background: white;
+      border-radius: 15px;
+      padding: 15px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    input {
+      width: 70px;
+      padding: 5px;
+      margin: 5px;
+      text-align: center;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+    button {
+      background: #2b5;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    button:hover {
+      background: #249;
+    }
+    #result {
+      font-size: 20px;
+      margin-top: 20px;
+      color: #333;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>📘 حاسبة المعدل</h1>
+  <div id="subjects"></div>
+  <button onclick="addSubject()">➕ إضافة مادة</button><br>
+  <button onclick="calculate()">🔢 احسب المعدل</button>
+  <div id="result"></div>
+
+  <script>
+    function addSubject() {
+      const container = document.getElementById('subjects');
+      const div = document.createElement('div');
+      div.className = 'subject';
+      div.innerHTML = `
+        <label>TD:</label><input type="number" step="0.01" class="td">
+        <label>%TD:</label><input type="number" step="0.01" class="ptd" placeholder="مثلاً 0.4 أو 40">
+        <label>Exam:</label><input type="number" step="0.01" class="exam">
+        <label>%Exam:</label><input type="number" step="0.01" class="pexam" placeholder="مثلاً 0.6 أو 60">
+        <label>معامل:</label><input type="number" step="0.01" class="coeff" value="1">
+      `;
+      container.appendChild(div);
+    }
+
+    function calculate() {
+      const subjects = document.getElementsByClassName('subject');
+      let totalWeighted = 0;
+      let totalCoeff = 0;
+
+      for (let s of subjects) {
+        let td = parseFloat(s.querySelector('.td').value) || 0;
+        let ptd = parseFloat(s.querySelector('.ptd').value) || 0;
+        let exam = parseFloat(s.querySelector('.exam').value) || 0;
+        let pexam = parseFloat(s.querySelector('.pexam').value) || 0;
+        let coeff = parseFloat(s.querySelector('.coeff').value) || 1;
+
+        // تحويل النسبة المئوية إلى رقم عشري إن كانت أكبر من 1
+        if (ptd > 1) ptd = ptd / 100;
+        if (pexam > 1) pexam = pexam / 100;
+
+        // القاعدة الخاصة: إذا لم يُدخل أحد الجزأين ونسبة الآخر = 1، يُحسب وحده
+        let mark = 0;
+        if (exam === 0 && (ptd === 1 || ptd === 100)) {
+          mark = td;
+        } else if (td === 0 && (pexam === 1 || pexam === 100)) {
+          mark = exam;
+        } else {
+          mark = (td * ptd) + (exam * pexam);
+        }
+
+        totalWeighted += mark * coeff;
+        totalCoeff += coeff;
+      }
+
+      let avg = totalWeighted / totalCoeff;
+      if (isNaN(avg)) avg = 0;
+
+      document.getElementById('result').innerText = `المعدل العام: ${avg.toFixed(2)}`;
+    }
+  </script>
+</body>
+</html>
