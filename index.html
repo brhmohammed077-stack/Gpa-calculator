@@ -7,90 +7,126 @@
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #121212;
-      color: #f0f0f0;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #333;
       display: flex;
       flex-direction: column;
       align-items: center;
       margin: 0;
       padding: 20px;
+      min-height: 100vh;
     }
 
     h1 {
-      color: #00ff88;
-      font-size: 2em;
+      color: #fff;
+      font-size: 2.5em;
       text-align: center;
-      margin-bottom: 20px;
+      margin-bottom: 30px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+      font-weight: bold;
     }
 
     .course {
-      background-color: #1e1e1e;
-      border: 1px solid #333;
-      border-radius: 10px;
-      padding: 15px;
-      margin-bottom: 10px;
+      background: rgba(255, 255, 255, 0.95);
+      border: 2px solid #fff;
+      border-radius: 15px;
+      padding: 20px;
+      margin-bottom: 15px;
       width: 90%;
-      max-width: 500px;
+      max-width: 550px;
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
+      gap: 10px;
       justify-content: space-between;
       align-items: center;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+      backdrop-filter: blur(10px);
     }
 
     input {
-      background-color: #2c2c2c;
-      border: 1px solid #555;
-      border-radius: 6px;
-      color: #fff;
-      padding: 5px 8px;
+      background-color: #f8f9ff;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      color: #333;
+      padding: 8px 12px;
       width: 100px;
+      font-size: 14px;
+      transition: border-color 0.3s;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #667eea;
     }
 
     button {
-      background-color: #00ff88;
-      color: #000;
+      background: linear-gradient(135deg, #ff6b6b, #feca57);
+      color: #fff;
       border: none;
-      border-radius: 6px;
-      padding: 8px 12px;
+      border-radius: 8px;
+      padding: 10px 16px;
       cursor: pointer;
       font-weight: bold;
-      transition: 0.3s;
+      transition: all 0.3s;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
     }
 
     button:hover {
-      background-color: #00cc6a;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.3);
     }
 
     #add-course {
       margin: 20px 0;
+      font-size: 1.2em;
+    }
+
+    #calculate {
+      font-size: 1.1em;
+      padding: 12px 24px;
     }
 
     #result {
-      font-size: 1.3em;
-      color: #00ff88;
-      margin-top: 15px;
+      font-size: 1.5em;
+      color: #fff;
+      margin-top: 25px;
+      padding: 20px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 15px;
+      backdrop-filter: blur(10px);
+      text-align: center;
+      font-weight: bold;
     }
 
     .delete-btn {
-      background-color: #ff3b3b;
+      background: linear-gradient(135deg, #ff416c, #ff4b2b);
       color: #fff;
-      padding: 6px 10px;
+      padding: 8px 12px;
+      font-size: 0.9em;
     }
 
     .delete-btn:hover {
-      background-color: #d62d2d;
+      background: linear-gradient(135deg, #ff1a5e, #ff4a2b);
+    }
+
+    .perc-input {
+      color: #666;
+      font-size: 12px;
     }
 
     @media (max-width: 600px) {
       input {
-        width: 80px;
+        width: 85px;
+      }
+      
+      h1 {
+        font-size: 2em;
       }
     }
   </style>
 </head>
 <body>
-  <h1>تحيا ولاد ميمون</h1>
+  <h1>Free Palestine</h1>
 
   <div id="courses"></div>
 
@@ -109,11 +145,11 @@
       const div = document.createElement("div");
       div.className = "course";
       div.innerHTML = `
-        <input type="number" placeholder="TD point" step="0.01">
-        <input type="number" placeholder="TD %" value="0" step="1">
-        <input type="number" placeholder="Exam point" step="0.01">
-        <input type="number" placeholder="Exam %" value="0" step="1">
-        <input type="number" placeholder="Coef" step="0.01">
+        <input type="number" placeholder="TD point" step="0.01" min="0" max="20">
+        <input type="number" class="perc-input" placeholder="TD %" value="40" step="1" min="0" max="100">
+        <input type="number" placeholder="Exam point" step="0.01" min="0" max="20">
+        <input type="number" class="perc-input" placeholder="Exam %" value="60" step="1" min="0" max="100">
+        <input type="number" placeholder="Coef" step="0.01" min="0">
         <button class="delete-btn">🗑️</button>
       `;
 
@@ -135,15 +171,7 @@
         const examPerc = parseFloat(course.children[3].value) / 100 || 0;
         const coef = parseFloat(course.children[4].value) || 0;
 
-        let subjectResult = 0;
-
-        if (examPoint === 0 && tdPoint > 0 && (tdPerc === 1 || tdPerc === 100)) {
-          subjectResult = tdPoint * coef;
-        } else if (tdPoint === 0 && examPoint > 0 && (examPerc === 1 || examPerc === 100)) {
-          subjectResult = examPoint * coef;
-        } else {
-          subjectResult = ((tdPoint * tdPerc) + (examPoint * examPerc)) * coef;
-        }
+        const subjectResult = ((tdPoint * tdPerc) + (examPoint * examPerc)) * coef;
 
         totalWeighted += subjectResult;
         totalCoef += coef;
@@ -151,9 +179,9 @@
 
       if (totalCoef > 0) {
         const gpa = (totalWeighted / totalCoef).toFixed(2);
-        resultDiv.innerHTML = `🎯 Your GPA is: <strong>${gpa}</strong>`;
+        resultDiv.innerHTML = `🎯 Your GPA is: <strong>${gpa}/20</strong>`;
       } else {
-        resultDiv.innerHTML = "⚠️ Please enter valid data.";
+        resultDiv.innerHTML = "⚠️ Please enter valid data and coefficients.";
       }
     };
 
