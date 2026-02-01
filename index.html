@@ -1,314 +1,59 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar">
 <head>
   <meta charset="UTF-8" />
+  <title>قيد التوسعة</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GPA Calculator - Secure Access</title>
   <style>
-    :root {
-      /* Theme Colors */
-      --primary: #14532d;       /* Dark Green */
-      --primary-dark: #052e16;  /* Darker Green for hover */
-      --accent: #166534;        /* Medium Green for accents */
-      --bg-color: #F6F6F2;      /* Requested Background */
-      --card-bg: #ffffff;
-      --text-main: #1f2937;
-      --text-muted: #6b7280;
-      --danger: #dc2626;
-      --success: #15803d;
-    }
-
-    /* شاشة تسجيل الدخول */
-    #lock-screen {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: var(--primary);
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background-color: #0f172a;
+      color: #e5e7eb;
       display: flex;
-      flex-direction: column;
-      justify-content: center;
       align-items: center;
-      z-index: 9999;
-      color: white;
+      justify-content: center;
+      height: 100vh;
       text-align: center;
     }
 
-    .login-box {
-      background: white;
-      padding: 30px;
-      border-radius: 15px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-      width: 90%;
-      max-width: 400px;
+    .container {
+      max-width: 600px;
+      padding: 20px;
     }
 
-    .login-box h2 {
-      color: var(--primary);
+    h1 {
+      font-size: 24px;
       margin-bottom: 20px;
     }
 
-    .login-box input {
-      width: 100%;
-      padding: 12px;
-      margin-bottom: 15px;
-      border: 2px solid #ddd;
-      border-radius: 8px;
-      box-sizing: border-box;
-      font-size: 1rem;
+    p {
+      font-size: 16px;
+      line-height: 1.8;
+      margin: 10px 0;
     }
 
-    .login-box button {
-      width: 100%;
-      padding: 12px;
-      background: var(--primary);
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: background 0.3s;
+    .divider {
+      margin: 30px 0;
+      height: 1px;
+      background-color: #334155;
     }
-
-    .login-box button:hover {
-      background: var(--primary-dark);
-    }
-
-    #error-msg {
-      color: var(--danger);
-      font-size: 0.85rem;
-      margin-top: 10px;
-      display: none;
-    }
-
-    /* باقي تنسيقاتك الأصلية */
-    body {
-      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-      background-color: var(--bg-color);
-      color: var(--text-main);
-      margin: 0;
-      padding: 0;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .top-banner {
-      width: 100%;
-      background-color: var(--card-bg);
-      color: var(--text-main);
-      text-align: center;
-      padding: 15px 0;
-      font-size: 1.5rem;
-      font-weight: 800;
-      border-bottom: 3px solid #000;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-      letter-spacing: 1px;
-    }
-
-    .flag-icon { margin: 0 10px; }
-
-    header { width: 100%; padding: 30px 0 20px 0; text-align: center; }
-
-    h1 { margin: 0; color: var(--primary); font-size: 2rem; font-weight: 700; text-transform: uppercase; }
-
-    .subtitle { color: var(--text-muted); font-size: 0.95rem; margin-top: 5px; }
-
-    .container { width: 90%; max-width: 900px; padding-bottom: 80px; }
-
-    .course-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
-
-    .course-card {
-      background: var(--card-bg);
-      border-radius: 12px;
-      padding: 20px;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-      border: 1px solid #e5e7eb;
-      transition: transform 0.2s, box-shadow 0.2s;
-      border-top: 4px solid var(--accent);
-    }
-
-    .course-card:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
-
-    .card-header { display: flex; justify-content: space-between; align-items: start; margin-bottom: 15px; border-bottom: 1px solid #f3f4f6; padding-bottom: 10px; }
-
-    .course-title { font-weight: 700; color: var(--text-main); font-size: 1.1rem; border: none; background: transparent; width: 85%; }
-    
-    .remove-btn { background: transparent; border: none; color: var(--text-muted); cursor: pointer; font-size: 1.2rem; }
-
-    .input-group { margin-bottom: 12px; }
-
-    .input-label { display: block; font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; margin-bottom: 4px; }
-
-    .row { display: flex; gap: 10px; }
-
-    .col { flex: 1; }
-
-    input[type="number"] { width: 100%; padding: 8px 10px; border: 1px solid #d1d5db; border-radius: 6px; box-sizing: border-box; }
-
-    .actions { margin-top: 30px; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; }
-
-    .btn { padding: 12px 28px; border-radius: 8px; border: none; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 8px; }
-
-    .btn-secondary { background-color: #ffffff; border: 2px solid #e5e7eb; }
-
-    .btn-primary { background-color: var(--primary); color: white; }
-
-    #result-container { margin-top: 30px; text-align: center; opacity: 0; transition: opacity 0.3s; }
-
-    .gpa-display { background: var(--card-bg); padding: 25px 50px; border-radius: 16px; border-bottom: 6px solid var(--primary); }
-
-    .gpa-value { font-size: 2.8rem; font-weight: 800; color: var(--primary); display: block; }
   </style>
 </head>
 <body>
-
-  <div id="lock-screen">
-    <div class="login-box">
-      <h2>دخول النظام</h2>
-      <input type="password" id="pass-input" placeholder="أدخل كلمة السر هنا...">
-      <button onclick="checkPassword()">دخول</button>
-      <p id="error-msg">كلمة السر خاطئة، حاول مرة أخرى!</p>
-    </div>
-  </div>
-
-  <div class="top-banner">
-    <span class="flag-icon">🇵🇸</span> FREE PALESTINE <span class="flag-icon">🇵🇸</span>
-  </div>
-
-  <header>
-    <h1>Academic GPA Calculator</h1>
-    <div class="subtitle">Semester Grade Management System</div>
-  </header>
-
   <div class="container">
-    <div id="courses" class="course-grid"></div>
+    <h1>المشروع قيد التوسعة</h1>
+    <p>نرجو ترقبنا في: <strong>2026/03/20</strong></p>
 
-    <div class="actions">
-      <button class="btn btn-secondary" id="add-course">
-        <span>+ Add Subject</span>
-      </button>
-      <button class="btn btn-primary" id="calculate">
-        <span>Calculate GPA</span>
-      </button>
-    </div>
+    <div class="divider"></div>
 
-    <div id="result-container">
-      <div class="gpa-display">
-        <span class="gpa-text">Weighted Average</span>
-        <span class="gpa-value" id="gpa-value">--/20</span>
-        <span class="gpa-text" id="gpa-msg"></span>
-      </div>
-    </div>
+    <h1>Project Under Expansion</h1>
+    <p>Please stay tuned until: <strong>2026/03/20</strong></p>
+
+    <div class="divider"></div>
+
+    <p>دعواتكم لإخوتكم في غزة</p>
   </div>
-
-  <script>
-    // نظام التحقق من كلمة السر
-    function checkPassword() {
-      const passInput = document.getElementById('pass-input').value;
-      const correctPass = "Welcome to Ouzidan";
-      const lockScreen = document.getElementById('lock-screen');
-      const errorMsg = document.getElementById('error-msg');
-
-      if (passInput === correctPass) {
-        lockScreen.style.display = 'none';
-      } else {
-        errorMsg.style.display = 'block';
-        document.getElementById('pass-input').value = "";
-      }
-    }
-
-    // السماح بالضغط على Enter للدخول
-    document.getElementById('pass-input').addEventListener('keypress', function (e) {
-      if (e.key === 'Enter') {
-        checkPassword();
-      }
-    });
-
-    // إعداد المواد الأصلية
-    const initialSubjects = [
-      { name: "إدارة الموارد البشرية", coef: 2 },
-      { name: "تكنولوجيا المعلومات", coef: 2 },
-      { name: "إدارة مالية", coef: 2 },
-      { name: "إستقصاء", coef: 2 },
-      { name: "إدارة المشاريع", coef: 2 },
-      { name: "هياكل وتنظيم المؤسسة", coef: 2 },
-      { name: "قانون الأعمال", coef: 2 },
-      { name: "إنجليزية", coef: 1 }
-    ];
-
-    const coursesDiv = document.getElementById("courses");
-    const addBtn = document.getElementById("add-course");
-    const calcBtn = document.getElementById("calculate");
-    const resultContainer = document.getElementById("result-container");
-    const gpaValueDisplay = document.getElementById("gpa-value");
-    const gpaMsgDisplay = document.getElementById("gpa-msg");
-
-    function createCourseHTML(name = "", coef = 2) {
-      const div = document.createElement("div");
-      div.className = "course-card";
-      div.innerHTML = `
-        <div class="card-header">
-          <input type="text" class="course-title" value="${name}" placeholder="Subject Name">
-          <button class="remove-btn" title="Remove Subject">×</button>
-        </div>
-        <div class="input-group">
-          <span class="input-label">Grades (0-20)</span>
-          <div class="row">
-            <div class="col"><input type="number" class="td-point" placeholder="TD Grade" step="0.01"></div>
-            <div class="col"><input type="number" class="exam-point" placeholder="Exam Grade" step="0.01"></div>
-          </div>
-        </div>
-        <div class="input-group">
-          <span class="input-label">Configuration</span>
-          <div class="row">
-            <div class="col"><input type="number" class="td-perc small-input" value="40"></div>
-            <div class="col"><input type="number" class="exam-perc small-input" value="60"></div>
-            <div class="col"><input type="number" class="coef-val small-input" value="${coef}"></div>
-          </div>
-        </div>
-      `;
-      div.querySelector(".remove-btn").onclick = () => div.remove();
-      return div;
-    }
-
-    function init() {
-      initialSubjects.forEach(sub => {
-        coursesDiv.appendChild(createCourseHTML(sub.name, sub.coef));
-      });
-    }
-
-    addBtn.onclick = () => coursesDiv.appendChild(createCourseHTML("New Subject", 1));
-
-    calcBtn.onclick = () => {
-      const courses = document.querySelectorAll(".course-card");
-      let totalWeightedScore = 0;
-      let totalCoef = 0;
-
-      courses.forEach(course => {
-        const tdPoint = parseFloat(course.querySelector(".td-point").value) || 0;
-        const examPoint = parseFloat(course.querySelector(".exam-point").value) || 0;
-        const tdPercVal = parseFloat(course.querySelector(".td-perc").value) || 0;
-        const examPercVal = parseFloat(course.querySelector(".exam-perc").value) || 0;
-        const coef = parseFloat(course.querySelector(".coef-val").value) || 0;
-
-        const subjectAvg = ((tdPoint * tdPercVal) + (examPoint * examPercVal)) / 100;
-        totalWeightedScore += (subjectAvg * coef);
-        totalCoef += coef;
-      });
-
-      resultContainer.style.opacity = '1';
-      if (totalCoef > 0) {
-        const finalGPA = (totalWeightedScore / totalCoef).toFixed(2);
-        gpaValueDisplay.innerText = `${finalGPA}/20`;
-        gpaValueDisplay.style.color = finalGPA >= 10 ? "var(--success)" : "var(--danger)";
-        gpaMsgDisplay.innerText = finalGPA >= 10 ? "Congratulations! You passed." : "Keep going, you can do this.";
-      }
-    };
-
-    init();
-  </script>
 </body>
 </html>
