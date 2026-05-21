@@ -199,7 +199,7 @@
       <div class="gpa-display">
         <span class="gpa-text">Weighted Average</span>
         <span class="gpa-value" id="gpa-value">--/20</span>
-        <span class="gpa-text" id="gpa-msg"></span>
+        <span class="gpa-text" id="gpa-msg" style="display: block; margin-top: 15px; font-weight: bold; font-size: 1.2rem;"></span>
       </div>
     </div>
   </div>
@@ -208,7 +208,7 @@
     // نظام التحقق من كلمة السر
     function checkPassword() {
       const passInput = document.getElementById('pass-input').value;
-      const correctPass = "1572";
+      const correctPass = "050325"; // Password changed to 050325
       const lockScreen = document.getElementById('lock-screen');
       const errorMsg = document.getElementById('error-msg');
 
@@ -245,6 +245,14 @@
     const resultContainer = document.getElementById("result-container");
     const gpaValueDisplay = document.getElementById("gpa-value");
     const gpaMsgDisplay = document.getElementById("gpa-msg");
+
+    // الجمل العشوائية للراسبين
+    const failMessages = [
+      "كون دخلت للكور",
+      "علاه ماقريتش",
+      "ناس تبحر ونتا تفوت راطراباج",
+      "هاك كريك طلع بيه سوماستر🙂"
+    ];
 
     function createCourseHTML(name = "", coef = 2) {
       const div = document.createElement("div");
@@ -303,13 +311,23 @@
       if (totalCoef > 0) {
         const finalGPA = (totalWeightedScore / totalCoef).toFixed(2);
         gpaValueDisplay.innerText = `${finalGPA}/20`;
-        gpaValueDisplay.style.color = finalGPA >= 10 ? "var(--success)" : "var(--danger)";
-        gpaMsgDisplay.innerText = finalGPA >= 10 ? "Congratulations! You passed." : "Keep going, you can do this.";
+        
+        // Custom logic for displaying messages
+        if (finalGPA >= 10) {
+          gpaValueDisplay.style.color = "var(--success)";
+          gpaMsgDisplay.style.color = "var(--success)";
+          gpaMsgDisplay.innerText = "بالكوبياج ولا عرقك ؟🙂";
+        } else {
+          gpaValueDisplay.style.color = "var(--danger)";
+          gpaMsgDisplay.style.color = "var(--danger)";
+          // Select a random message from the failMessages array
+          const randomMessage = failMessages[Math.floor(Math.random() * failMessages.length)];
+          gpaMsgDisplay.innerText = randomMessage;
+        }
       }
     };
 
     init();
   </script>
 </body>
-  </html>
-        
+</html>
